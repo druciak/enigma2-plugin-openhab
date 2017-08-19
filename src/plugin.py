@@ -29,7 +29,7 @@ class SitemapWidget(object):
             item_name = self.item["name"].encode("UTF-8")
             if cmd:
                 cmd = str(cmd)
-            elif item_type in ["SwitchItem", "DimmerItem", "NumberItem"]:
+            elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"]:
                 cmd = str(self.value)
             if cmd:
                 debug("Sending command: type=%s, name=%s, cmd=%s" % (item_type, item_name, cmd))
@@ -190,10 +190,11 @@ class SitemapWindow(Screen, ConfigListScreen):
         client.get_sitemap(self.sitemap).addCallbacks(callback=download_done, errback=download_err)
 
     def load_widgets(self, items, sitemap):
-        widget_list = sitemap.get("widget") or []
+        widget_list = sitemap.get("widget") or sitemap.get("widgets") or []
         if not isinstance(widget_list, list):
             widget_list = [widget_list]
 
+        debug("Found %d widgets on the sitemap" % len(widget_list))
         for widget_data in widget_list:
             debug("Processing widget: " + unicode(widget_data).encode("UTF-8"))
             widget_type = widget_data["type"]
@@ -207,7 +208,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                 widget_label2 = match.group(2)
             widget_item = widget_data.get("item")
             item_state = widget_item["state"] if widget_item else None
-            if item_state is None or item_state == "Undefined":
+            if item_state is None or item_state == "Undefined" or item_state == "NULL":
                 item_state = ""
             sub_page = widget_data.get("linkedPage", {}).get("id")
             if sub_page:
@@ -221,13 +222,13 @@ class SitemapWindow(Screen, ConfigListScreen):
                     items.append(getConfigListEntry(widget_label1, ShutterWidget(widget_item, sub_page, item_state)))
                 else:
                     items.append(getConfigListEntry(" ".join([widget_label1, widget_label2]), 
-                                                    SwitchWidget(widget_item, sub_page, mapping=widget_data.get("mapping"))))
+                                                    SwitchWidget(widget_item, sub_page, mapping=widget_data.get("mapping") or widget_data.get("mappings"))))
 
             elif widget_type == "Slider":
                 items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page)))
 
             elif widget_type == "Selection":
-                choices = map(lambda item: (item["command"], item["label"]), widget_data["mapping"])
+                choices = map(lambda item: (item["command"], item["label"]), widget_data.get("mapping") or widget_data["mappings"])
                 items.append(getConfigListEntry(widget_label1, SelectionWidget(widget_item, sub_page, choices=choices)))
 
             elif widget_type == "Frame":

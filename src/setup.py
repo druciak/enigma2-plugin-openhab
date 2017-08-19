@@ -38,7 +38,7 @@ class SetupWindow(Screen, ConfigListScreen):
         ConfigListScreen.__init__(self, self.list)
         
         self["config"].list = self.list
-        self["info"] = Label(_("Plugin: %(name)s , Version: %(version)s") % dict(name=PLUGIN_BASE, version=PLUGIN_VERSION))
+        self["info"] = Label(_("Plugin: %(name)s, Version: %(version)s") % dict(name=PLUGIN_BASE, version=PLUGIN_VERSION))
 
         self["key_red"] = Button(_("Cancel"))
         self["key_green"] = Button(_("Save"))

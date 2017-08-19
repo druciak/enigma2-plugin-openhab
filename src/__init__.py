@@ -6,7 +6,7 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_LANGUAGE
 import os, gettext, time
 
 PLUGIN_BASE = "openHAB"
-PLUGIN_VERSION = "1.0"
+PLUGIN_VERSION = "0.2"
 
 LOG_FILE = "/tmp/%s.log" % PLUGIN_BASE
 
