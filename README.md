@@ -12,7 +12,7 @@ select the plugin and install it by pressing "green".
 
 Alternatively download *.ipk file from [releases](https://github.com/druciak/enigma2-plugin-openhab/releases) page directly to your box and install it using opkg utility:
 ```
-root@vuduo:~# wget https://github.com/druciak/enigma2-plugin-openhab/releases/download/0.1/enigma2-plugin-extentions-openhab_0.1.git1.74fe9f3-r0_all.ipk
+root@vuduo:~# wget https://github.com/druciak/enigma2-plugin-openhab/releases/download/0.2/enigma2-plugin-extensions-openhab_0.2.git4.c8068aa-r0_all.ipk
 root@vuduo:~# opkg install enigma2-plugin-extentions-openhab*.ipk
 ```
 
