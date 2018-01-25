@@ -48,22 +48,23 @@ class SwitchWidget(SitemapWidget, ConfigSelection):
     def __init__(self, item, sub_page, mapping=None):
         SitemapWidget.__init__(self, item, sub_page)
         
+        item_state = item.get("state") if item else None
         if mapping:
             if not isinstance(mapping, list):
                 mapping = [mapping]
             choices = map(lambda mi: (mi["command"], mi["label"]), mapping)
-            if len(mapping) == 1:
+            if len(mapping) == 1 and item_state:
                 # button mode
-                if mapping[0]["command"] == item["state"]:
+                if mapping[0]["command"] == item_state:
                     # disabled: empty text
-                    choices = [(item["state"], "")] 
+                    choices = [(item_state, "")] 
                 else:
                     # add ability to send mapped command
-                    choices.append((item["state"], mapping[0]["label"]))
+                    choices.append((item_state, mapping[0]["label"]))
         else:
             choices = [("ON", _("on")), ("OFF", _("off"))]
             
-        ConfigSelection.__init__(self, choices=choices, default=item["state"])
+        ConfigSelection.__init__(self, choices=choices, default=item_state)
 
     def handleKey(self, key):
         if key == KEY_OK:
@@ -180,6 +181,7 @@ class SitemapWindow(Screen, ConfigListScreen):
         def download_err(error):
             self.refreshing = False
             debug("Error while loading sitemap %s: %s" % (self.sitemap, str(error)))
+            self.refreshTimer.stop()
             self.session.openWithCallback(lambda result: self.show_settings() if result else self.close(), MessageBox, 
                                           _("Error loading sitemap: %s\nOpen settings window to configure connection parameters?") % self.sitemap, MessageBox.TYPE_YESNO)
     
@@ -239,7 +241,8 @@ class SitemapWindow(Screen, ConfigListScreen):
                 debug("Skipping unknown widget: " + widget_type)
             
             debug("Widget processed: " + widget_type)
-        
+
+        debug("All widgets have been processed successfully")
         return items
 
     def item_changed(self):
@@ -278,10 +281,13 @@ class SitemapWindow(Screen, ConfigListScreen):
                 create_client()
                 self.sitemap = config_root.sitemap.value
                 self.refresh_data(reset_index=True)
+            self.refreshTimer.start(config_root.refresh.value*1000)
     
+        self.refreshTimer.stop()
         self.session.openWithCallback(on_close, SetupWindow)
 
     def close(self):
+        debug("Closing main window")
         self.refreshTimer.stop()
         Screen.close(self)
 
