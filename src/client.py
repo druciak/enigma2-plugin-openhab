@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from . import debug
+from . import trace
 
 from zope.interface import implements
 
@@ -37,17 +37,17 @@ class JsonReceiver(Protocol):
         self.onConnLost = onFinish
 
     def connectionMade(self):
-        debug("Started receiving data")
+        trace("Started receiving data")
         self.data = ""
 
     def dataReceived(self, data):
-        debug("Received data chunk: %d" % len(data))
+        trace("Received data chunk: %d", len(data))
         self.data += data
 
     def connectionLost(self, reason):
-        debug("Receiving stopped, reason: %s" % str(reason))
+        trace("Receiving stopped, reason: %s", str(reason))
         if reason.check(ResponseDone):
-            debug("All data received, total size: %d" % len(self.data))
+            trace("All data received, total size: %d", len(self.data))
             try:
                 self.onConnLost.callback(json_loads(self.data))
             except ValueError, e:
@@ -73,7 +73,7 @@ class RestClient(object):
     def make_req(self, url, method="GET", data=None):
 
         def on_response(response):
-            debug("Response received, code: %d" % response.code)
+            trace("Response received, code: %d", response.code)
             if response.code == 200:
                 response.deliverBody(JsonReceiver(result))
             else:
@@ -84,7 +84,7 @@ class RestClient(object):
             result.errback(err)
             return result
 
-        debug("Making %s request to %s" % (method, url))
+        trace("Making %s request to %s", method, url)
         result = Deferred()
         post = data is not None
         deferred = self.agent.request(method, url, Headers(self.std_headers), StringProducer(data) if post else None)

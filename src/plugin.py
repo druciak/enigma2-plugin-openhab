@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from . import _, config_root, debug
+from . import _, config_root, debug, trace
 from setup import SetupWindow
 from client import RestClient
 
@@ -32,7 +32,7 @@ class SitemapWidget(object):
             elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"]:
                 cmd = str(self.value)
             if cmd:
-                debug("Sending command: type=%s, name=%s, cmd=%s" % (item_type, item_name, cmd))
+                debug("Sending command: type=%s, name=%s, cmd=%s", item_type, item_name, cmd)
                 client.send_cmd(item_name, cmd)
 
 
@@ -68,7 +68,7 @@ class SwitchWidget(SitemapWidget, ConfigSelection):
 
     def handleKey(self, key):
         if key == KEY_OK:
-            debug("[SwitchWidget] KEY_OK pressed")
+            trace("[SwitchWidget] KEY_OK pressed")
             self.selectNext()
             self.send_command()
         else:
@@ -93,7 +93,7 @@ class SliderWidget(SitemapWidget, ConfigSlider):
 
     def handleKey(self, key):
         if key == KEY_OK:
-            debug("[SliderWidget] KEY_OK pressed")
+            trace("[SliderWidget] KEY_OK pressed")
             if self.value == SliderWidget.MIN_VAL:
                 self.value = SliderWidget.MAX_VAL
             else:
@@ -117,7 +117,7 @@ class ShutterWidget(SitemapWidget, ConfigSelection):
         ConfigSelection.__init__(self, choices=[(value, "%s %%" % value)])
 
     def handleKey(self, key):
-        debug("[ShutterWidget] key pressed: " + str(key))
+        trace("[ShutterWidget] key pressed: %s", str(key))
         if key == KEY_OK:
             self.send_command("STOP")
         elif key == KEY_LEFT:
@@ -167,7 +167,7 @@ class SitemapWindow(Screen, ConfigListScreen):
     
         def download_done(sitemap):
             self.refreshing = False
-            debug("Sitemap loaded successfully: %s" % self.sitemap)
+            debug("Sitemap loaded successfully: %s", self.sitemap)
             if "homepage" in sitemap:
                 sitemap = sitemap["homepage"]
             self.setTitle(sitemap["title"].encode("UTF-8"))
@@ -177,10 +177,11 @@ class SitemapWindow(Screen, ConfigListScreen):
             self["config"].list = self.load_widgets([], sitemap)
             if reset_index:
                 self["config"].setCurrentIndex(0)
+            debug("All widgets have been processed successfully")
         
         def download_err(error):
             self.refreshing = False
-            debug("Error while loading sitemap %s: %s" % (self.sitemap, str(error)))
+            debug("Error while loading sitemap %s: %s", self.sitemap, str(error))
             self.refreshTimer.stop()
             self.session.openWithCallback(lambda result: self.show_settings() if result else self.close(), MessageBox, 
                                           _("Error loading sitemap: %s\nOpen settings window to configure connection parameters?") % self.sitemap, MessageBox.TYPE_YESNO)
@@ -188,7 +189,7 @@ class SitemapWindow(Screen, ConfigListScreen):
         if self.refreshing:
             return
         self.refreshing = True
-        debug("Loading sitemap: %s" % self.sitemap)
+        debug("Loading sitemap: %s", self.sitemap)
         client.get_sitemap(self.sitemap).addCallbacks(callback=download_done, errback=download_err)
 
     def load_widgets(self, items, sitemap):
@@ -196,9 +197,9 @@ class SitemapWindow(Screen, ConfigListScreen):
         if not isinstance(widget_list, list):
             widget_list = [widget_list]
 
-        debug("Found %d widgets on the sitemap" % len(widget_list))
+        debug("Found %d widgets on the sitemap", len(widget_list))
         for widget_data in widget_list:
-            debug("Processing widget: " + unicode(widget_data).encode("UTF-8"))
+            trace("Processing widget: %s", unicode(widget_data).encode("UTF-8"))
             widget_type = widget_data["type"]
             widget_label = widget_data["label"].encode("UTF-8")
             match = LABEL_PATTERN.match(widget_label)
@@ -238,18 +239,17 @@ class SitemapWindow(Screen, ConfigListScreen):
                 self.load_widgets(items, widget_data)
 
             else:
-                debug("Skipping unknown widget: " + widget_type)
+                debug("Skipping unknown widget: %s", widget_type)
             
-            debug("Widget processed: " + widget_type)
+            debug("Widget processed: %s", widget_type)
 
-        debug("All widgets have been processed successfully")
         return items
 
     def item_changed(self):
-            debug("Item changed: " + str(self["config"].getCurrent()))
-            current = self["config"].getCurrent()
-            if current:
-                current[1].send_command()
+        current = self["config"].getCurrent()
+        debug("Item changed: %s -> %s for %s", str(current.last_value), str(current.value), str(current))
+        if current and current.last_value != current.value:
+            current[1].send_command()
 
     def keyOK(self):
         current = self["config"].getCurrent()
@@ -261,14 +261,14 @@ class SitemapWindow(Screen, ConfigListScreen):
     def go_into(self, sub_page):
         sitemap = self.sitemap.split("/", 2)[0]
         self.sitemap = sitemap + "/" + sub_page
-        debug("Going into:" + self.sitemap)
+        trace("Going into: %s", self.sitemap)
         self.refresh_data(reset_index=True)
 
     def go_up(self):
         if self.sitemap != config_root.sitemap.value and self.parent_page:
             sitemap = self.sitemap.split("/", 2)[0]
             self.sitemap = sitemap + "/" + self.parent_page
-            debug("Going up:" + self.sitemap)
+            trace("Going up: ", self.sitemap)
             self.refresh_data(reset_index=True)
         else:
             self.close()

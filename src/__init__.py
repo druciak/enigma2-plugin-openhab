@@ -1,14 +1,17 @@
 # -*- coding: UTF-8 -*-
 
-from Components.config import config, ConfigSubsection, ConfigText, ConfigNumber, ConfigPassword, ConfigYesNo
+from Components.config import config, ConfigSubsection, ConfigText, ConfigNumber, ConfigPassword, ConfigSelection
 from Components.Language import language
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_LANGUAGE
 import os, gettext, time
 
 PLUGIN_BASE = "openHAB"
-PLUGIN_VERSION = "0.2"
+PLUGIN_VERSION = "0.3"
 
 LOG_FILE = "/tmp/%s.log" % PLUGIN_BASE
+OFF_LEVEL = 0
+DEBUG_LEVEL = 1
+TRACE_LEVEL = 2
 
 PluginLanguageDomain = PLUGIN_BASE
 PluginLanguagePath = "Extensions/%s/locale" % PLUGIN_BASE
@@ -29,10 +32,17 @@ def initLog():
     except OSError:
         pass
 
-def debug(message):
-    if config_root.debug.value:
-        with open(LOG_FILE, "aw") as f:
-            f.write(time.ctime() + ": " + message + "\n")
+def debug(message, *args):
+    if config_root.debug.value >= DEBUG_LEVEL:
+        log(message, *args)
+
+def trace(message, *args):
+    if config_root.debug.value >= TRACE_LEVEL:
+        log(message, *args)
+
+def log(message, *args):
+    with open(LOG_FILE, "aw") as f:
+        f.write(time.ctime() + ": " + message + "\n" % args)
 
 def initConfig():
     config_root = config.plugins.openHAB = ConfigSubsection()
@@ -42,7 +52,9 @@ def initConfig():
     config_root.password = ConfigPassword()
     config_root.sitemap = ConfigText(default="default", fixed_size=False)
     config_root.refresh = ConfigNumber(3)
-    config_root.debug = ConfigYesNo(default=False)
+    config_root.debug = ConfigSelection(default=OFF_LEVEL, choices=[(OFF_LEVEL, _("no")), 
+                                                                    (DEBUG_LEVEL, _("debug")), 
+                                                                    (TRACE_LEVEL, _("trace"))])
     return config_root
 
 config_root = initConfig()
