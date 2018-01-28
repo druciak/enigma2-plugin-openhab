@@ -247,9 +247,11 @@ class SitemapWindow(Screen, ConfigListScreen):
 
     def item_changed(self):
         current = self["config"].getCurrent()
-        debug("Item changed: %s -> %s for %s", str(current.last_value), str(current.value), str(current))
-        if current and current.last_value != current.value:
-            current[1].send_command()
+        if current:
+            current_item = current[1]
+            debug("Item changed: %s -> %s for %s", str(current_item.last_value), str(current_item.value), str(current_item))
+            if current_item.last_value != current_item.value:
+                current_item.send_command()
 
     def keyOK(self):
         current = self["config"].getCurrent()

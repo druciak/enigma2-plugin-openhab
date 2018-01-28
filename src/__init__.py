@@ -42,7 +42,7 @@ def trace(message, *args):
 
 def log(message, *args):
     with open(LOG_FILE, "aw") as f:
-        f.write(time.ctime() + ": " + message + "\n" % args)
+        f.write((time.ctime() + ": " + message + "\n") % args)
 
 def initConfig():
     config_root = config.plugins.openHAB = ConfigSubsection()
