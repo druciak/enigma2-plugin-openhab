@@ -82,6 +82,12 @@ class SelectionWidget(SitemapWidget, ConfigSelection):
         ConfigSelection.__init__(self, default=item.get("state") if item else None, choices=choices)
 
 
+def toint(str_val, default=0):
+    try:
+        return int(str_val)
+    except ValueError:
+        return default
+
 class SliderWidget(SitemapWidget, ConfigSlider):
     
     MIN_VAL = 0
@@ -89,7 +95,7 @@ class SliderWidget(SitemapWidget, ConfigSlider):
     
     def __init__(self, item, sub_page, increment=5):
         SitemapWidget.__init__(self, item, sub_page)
-        ConfigSlider.__init__(self, default=int(item["state"]), increment=increment, limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
+        ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=increment, limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
 
     def handleKey(self, key):
         if key == KEY_OK:
