@@ -92,10 +92,11 @@ class SliderWidget(SitemapWidget, ConfigSlider):
     
     MIN_VAL = 0
     MAX_VAL = 100
+    DIMMER_STEP = config_root.dimmer.value
     
     def __init__(self, item, sub_page, increment=5):
         SitemapWidget.__init__(self, item, sub_page)
-        ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=increment, limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
+        ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=(SliderWidget.DIMMER_STEP), limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
 
     def handleKey(self, key):
         if key == KEY_OK:

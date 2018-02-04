@@ -51,7 +51,8 @@ def initConfig():
     config_root.user = ConfigText(fixed_size=False)
     config_root.password = ConfigPassword()
     config_root.sitemap = ConfigText(default="default", fixed_size=False)
-    config_root.refresh = ConfigNumber(3)
+    config_root.refresh = ConfigSelection(default=3, choices=[1, 2, 3, 5])
+    config_root.dimmer = ConfigSelection(default=5, choices=[1, 2, 3, 5, 10])
     config_root.debug = ConfigSelection(default=OFF_LEVEL, choices=[(OFF_LEVEL, _("no")), 
                                                                     (DEBUG_LEVEL, _("debug")), 
                                                                     (TRACE_LEVEL, _("trace"))])

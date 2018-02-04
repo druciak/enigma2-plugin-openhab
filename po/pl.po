@@ -65,6 +65,14 @@ msgid "Sitemap"
 msgstr "Mapa"
 
 #: src/setup.py:36
+msgid "Data refresh"
+msgstr "Odświeżanie danych"
+
+#: src/setup.py:37
+msgid "Dimmer step"
+msgstr "Krok ściemniacza"
+
+#: src/setup.py:38
 msgid "Enable debug"
 msgstr "Włącz debugowanie"
 
