@@ -33,8 +33,8 @@ class SetupWindow(Screen, ConfigListScreen):
             getConfigListEntry(_("User"), config_root.user),
             getConfigListEntry(_("Password"), config_root.password),
             getConfigListEntry(_("Sitemap"), config_root.sitemap),
-            getConfigListEntry(_("Data refresh"), config_root.refresh),
-            getConfigListEntry(_("Dimmer step"), config_root.dimmer),
+            getConfigListEntry(_("Refresh interval"), config_root.refresh),
+            getConfigListEntry(_("Dimmer step"), config_root.dimmer_step),
             getConfigListEntry(_("Enable debug"), config_root.debug),
         ]
         ConfigListScreen.__init__(self, self.list)

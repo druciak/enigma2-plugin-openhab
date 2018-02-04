@@ -61,7 +61,7 @@ msgid "Sitemap"
 msgstr ""
 
 #: src/setup.py:36
-msgid "Data refresh"
+msgid "Refresh interval"
 msgstr ""
 
 #: src/setup.py:37

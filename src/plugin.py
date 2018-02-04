@@ -92,11 +92,10 @@ class SliderWidget(SitemapWidget, ConfigSlider):
     
     MIN_VAL = 0
     MAX_VAL = 100
-    DIMMER_STEP = config_root.dimmer.value
     
     def __init__(self, item, sub_page, increment=5):
         SitemapWidget.__init__(self, item, sub_page)
-        ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=(SliderWidget.DIMMER_STEP), limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
+        ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=increment, limits=(SliderWidget.MIN_VAL, SliderWidget.MAX_VAL))
 
     def handleKey(self, key):
         if key == KEY_OK:
@@ -235,7 +234,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                                                     SwitchWidget(widget_item, sub_page, mapping=widget_data.get("mapping") or widget_data.get("mappings"))))
 
             elif widget_type == "Slider":
-                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page)))
+                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page, increment=config_root.dimmer_step.value)))
 
             elif widget_type == "Selection":
                 choices = map(lambda item: (item["command"], item["label"]), widget_data.get("mapping") or widget_data["mappings"])
