@@ -41,6 +41,9 @@ class StaticWidget(SitemapWidget, ConfigSelection):
     def __init__(self, item, sub_page, value):
         SitemapWidget.__init__(self, item, sub_page)
         ConfigSelection.__init__(self, choices=[value])
+    
+    def handleKey(self, key):
+        pass
 
 
 class SwitchWidget(SitemapWidget, ConfigSelection):
