@@ -29,7 +29,7 @@ class SitemapWidget(object):
             item_name = self.item["name"].encode("UTF-8")
             if cmd:
                 cmd = str(cmd)
-            elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"]:
+            elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"] or (item_type == "Group" and self.item.get("groupType") == "Switch"):
                 cmd = str(self.value)
             if cmd:
                 debug("Sending command: type=%s, name=%s, cmd=%s", item_type, item_name, cmd)
