@@ -75,6 +75,10 @@ msgstr "Krok ściemniacza"
 msgid "Enable debug"
 msgstr "Włącz debugowanie"
 
+#: src/setup.py:39
+msgid "Graphic sliders"
+msgstr "Graficzne suwaki"
+
 #: src/setup.py:41
 #, python-format
 msgid "Plugin: %(name)s , Version: %(version)s"

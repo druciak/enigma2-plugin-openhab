@@ -93,9 +93,10 @@ def toint(str_val, default=0):
 
 class SliderWidget(SitemapWidget, ConfigSlider):
     
-    def __init__(self, item, sub_page, increment=5):
+    def __init__(self, item, sub_page, increment=5, use_slider=False):
         SitemapWidget.__init__(self, item, sub_page)
         ConfigSlider.__init__(self, default=toint(item.get("state")) if item else 0, increment=increment)
+        self.use_slider = use_slider
 
     def handleKey(self, key):
         if key == KEY_OK:
@@ -110,7 +111,10 @@ class SliderWidget(SitemapWidget, ConfigSlider):
 
     def getMulti(self, selected):
             self.checkValues()
-            return ("text", self.getText())
+            if self.use_slider:
+                return ("slider", self.value, self.max)
+            else:
+                return ("text", self.getText())
 
     def getText(self):
             return "%d %%" % self.value
@@ -268,7 +272,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                                                     SwitchWidget(widget_item, sub_page, mapping=widget_data.get("mapping") or widget_data.get("mappings"))))
 
             elif widget_type == "Slider":
-                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page, increment=config_root.dimmer_step.int_value)))
+                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page, increment=config_root.dimmer_step.int_value, use_slider=config_root.graphic_sliders.value)))
 
             elif widget_type == "Selection":
                 choices = map(lambda item: (item["command"], item["label"]), widget_data.get("mapping") or widget_data["mappings"])

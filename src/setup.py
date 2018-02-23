@@ -36,6 +36,7 @@ class SetupWindow(Screen, ConfigListScreen):
             getConfigListEntry(_("Refresh interval"), config_root.refresh),
             getConfigListEntry(_("Dimmer step"), config_root.dimmer_step),
             getConfigListEntry(_("Enable debug"), config_root.debug),
+            getConfigListEntry(_("Graphic sliders"), config_root.graphic_sliders),
         ]
         ConfigListScreen.__init__(self, self.list)
         

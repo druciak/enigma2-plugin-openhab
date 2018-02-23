@@ -72,6 +72,10 @@ msgstr ""
 msgid "Enable debug"
 msgstr ""
 
+#: src/setup.py:39
+msgid "Graphic sliders"
+msgstr ""
+
 #: src/setup.py:41
 #, python-format
 msgid "Plugin: %(name)s , Version: %(version)s"
