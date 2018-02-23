@@ -33,16 +33,31 @@ def initLog():
         pass
 
 def debug(message, *args):
-    if config_root.debug.value >= DEBUG_LEVEL:
+    if config_root.debug.int_value >= DEBUG_LEVEL:
         log(message, *args)
 
 def trace(message, *args):
-    if config_root.debug.value >= TRACE_LEVEL:
+    if config_root.debug.int_value >= TRACE_LEVEL:
         log(message, *args)
 
 def log(message, *args):
     with open(LOG_FILE, "aw") as f:
         f.write((time.ctime() + ": " + message + "\n") % args)
+
+def ConfigIntSelection(choices, default=None):
+
+    def int_converter(cfg_elem):
+        try:
+            cfg_elem.int_value = None if cfg_elem.value is None else int(cfg_elem.value)
+        except ValueError:
+            cfg_elem.int_value = None
+    
+    def make_str_choices(c):
+        return [str(i) if type(i) == int else (str(i[0]), i[1]) for i in c]
+    
+    ctrl = ConfigSelection(choices, default=None if default is None else str(default))
+    ctrl.addNotifier(int_converter)
+    return ctrl
 
 def initConfig():
     config_root = config.plugins.openHAB = ConfigSubsection()
@@ -51,11 +66,10 @@ def initConfig():
     config_root.user = ConfigText(fixed_size=False)
     config_root.password = ConfigPassword()
     config_root.sitemap = ConfigText(default="default", fixed_size=False)
-    config_root.refresh = ConfigSelection(default=3, choices=[1, 2, 3, 5, 10])
-    config_root.dimmer_step = ConfigSelection(default=5, choices=[1, 2, 3, 5, 10])
-    config_root.debug = ConfigSelection(default=OFF_LEVEL, choices=[(OFF_LEVEL, _("no")), 
-                                                                    (DEBUG_LEVEL, _("debug")), 
-                                                                    (TRACE_LEVEL, _("trace"))])
+    config_root.refresh = ConfigIntSelection([1, 2, 3, 5, 10], default=3)
+    config_root.dimmer_step = ConfigIntSelection([1, 2, 3, 5, 10], default=5)
+    config_root.debug = ConfigIntSelection([(OFF_LEVEL, _("no")), (DEBUG_LEVEL, _("debug")), (TRACE_LEVEL, _("trace"))], 
+                                           default=OFF_LEVEL)
     return config_root
 
 config_root = initConfig()

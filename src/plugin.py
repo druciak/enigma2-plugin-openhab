@@ -170,7 +170,7 @@ class SitemapWindow(Screen, ConfigListScreen):
         
         self.refreshTimer = eTimer()
         self.refreshTimer.callback.append(self.refresh_data)
-        self.refreshTimer.start(config_root.refresh.value*1000)
+        self.refreshTimer.start(config_root.refresh.int_value*1000)
     
     def refresh_data(self, reset_index=False):
     
@@ -237,7 +237,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                                                     SwitchWidget(widget_item, sub_page, mapping=widget_data.get("mapping") or widget_data.get("mappings"))))
 
             elif widget_type == "Slider":
-                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page, increment=config_root.dimmer_step.value)))
+                items.append(getConfigListEntry(widget_label1, SliderWidget(widget_item, sub_page, increment=config_root.dimmer_step.int_value)))
 
             elif widget_type == "Selection":
                 choices = map(lambda item: (item["command"], item["label"]), widget_data.get("mapping") or widget_data["mappings"])
@@ -292,7 +292,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                 create_client()
                 self.sitemap = config_root.sitemap.value
                 self.refresh_data(reset_index=True)
-            self.refreshTimer.start(config_root.refresh.value*1000)
+            self.refreshTimer.start(config_root.refresh.int_value*1000)
     
         self.refreshTimer.stop()
         self.session.openWithCallback(on_close, SetupWindow)
