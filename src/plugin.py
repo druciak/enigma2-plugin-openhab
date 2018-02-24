@@ -110,14 +110,14 @@ class SliderWidget(SitemapWidget, ConfigSlider):
             ConfigSlider.handleKey(self, key)
 
     def getMulti(self, selected):
-            self.checkValues()
-            if self.use_slider:
-                return ("slider", self.value, self.max)
-            else:
-                return ("text", self.getText())
+        self.checkValues()
+        if self.use_slider:
+            return ("slider", self.value, self.max)
+        else:
+            return ("text", self.getText())
 
     def getText(self):
-            return "%d %%" % self.value
+        return "%d %%" % self.value
 
 
 class ShutterWidget(SitemapWidget, ConfigSelection):
@@ -156,10 +156,15 @@ class SetpointWidget(SitemapWidget, ConfigSlider):
     def __init__(self, item, sub_page, min_val, max_val, step):
         SitemapWidget.__init__(self, item, sub_page)
         ConfigSlider.__init__(self, default=tofloat(item.get("state")) if item else 0, increment=step, limits=(min_val, max_val))
+        stateDescription = self.item.get("stateDescription")
+        if stateDescription and stateDescription.get("pattern"):
+            self.pattern = stateDescription.get("pattern").encode("UTF-8")
+        else:
+            self.pattern = "%.1f"
 
     def handleKey(self, key):
         if key == KEY_OK:
-            trace("[SliderWidget] KEY_OK pressed")
+            trace("[SetpointWidget] KEY_OK pressed")
             if self.value == self.min:
                 self.value = self.max
             else:
@@ -169,11 +174,11 @@ class SetpointWidget(SitemapWidget, ConfigSlider):
             ConfigSlider.handleKey(self, key)
 
     def getMulti(self, selected):
-            self.checkValues()
-            return ("text", self.getText())
+        self.checkValues()
+        return ("text", self.getText())
 
     def getText(self):
-            return "%.1f" % self.value
+        return self.pattern % self.value
 
     def fromstring(self, value):
         return float(value)
