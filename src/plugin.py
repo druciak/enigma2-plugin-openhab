@@ -112,7 +112,7 @@ class SliderWidget(SitemapWidget, ConfigSlider):
     def getMulti(self, selected):
         self.checkValues()
         if self.use_slider:
-            return ("slider", self.value, self.max)
+            return ConfigSlider.getMulti(self, selected)
         else:
             return ("text", self.getText())
 
