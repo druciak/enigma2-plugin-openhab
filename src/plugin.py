@@ -27,9 +27,11 @@ class SitemapWidget(object):
         if self.item:
             item_type = self.item["type"]
             item_name = self.item["name"].encode("UTF-8")
+            if item_type == "Group":
+                item_type = self.item.get("groupType")
             if cmd:
                 cmd = str(cmd)
-            elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"] or (item_type == "Group" and self.item.get("groupType") == "Switch"):
+            elif item_type in ["Switch", "SwitchItem", "Dimmer", "DimmerItem", "Number", "NumberItem"]:
                 cmd = str(self.value)
             if cmd:
                 debug("Sending command: type=%s, name=%s, cmd=%s", item_type, item_name, cmd)
@@ -87,7 +89,7 @@ class SelectionWidget(SitemapWidget, ConfigSelection):
 
 def toint(str_val, default=0):
     try:
-        return int(str_val)
+        return int(round(float(str_val)))
     except ValueError:
         return default
 
