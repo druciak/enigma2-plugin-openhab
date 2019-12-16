@@ -272,7 +272,7 @@ class SitemapWindow(Screen, ConfigListScreen):
                 items.append(getConfigListEntry(widget_label1, StaticWidget(widget_item, sub_page, widget_label2 or item_state)))
 
             elif widget_type == "Switch":
-                if widget_item and widget_item.get("type") == "RollershutterItem":
+                if widget_item and (widget_item.get("type") == "RollershutterItem" or widget_item.get("type") == "Rollershutter"):
                     items.append(getConfigListEntry(widget_label1, ShutterWidget(widget_item, sub_page, item_state)))
                 else:
                     items.append(getConfigListEntry(" ".join([widget_label1, widget_label2]), 

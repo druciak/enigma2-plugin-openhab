@@ -3,7 +3,7 @@ import setup_translate
 
 pkg = 'Extensions.openHAB'
 setup (name = 'enigma2-plugin-extensions-openhab',
-       version = '0.6',
+       version = '0.7',
        description = 'Simple openHAB client for Enigma2',
        package_dir = {pkg: 'src'},
        packages = [pkg],
